@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: 1
+  name: MyString
+  tagline: MyString
+  description: MyText
+  abv: 9.99
+  iduser: MyString
+  see_at: 2020-02-09 04:25:52
+  favorite: false
+
+two:
+  id: 1
+  name: MyString
+  tagline: MyString
+  description: MyText
+  abv: 9.99
+  iduser: MyString
+  see_at: 2020-02-09 04:25:52
+  favorite: false
