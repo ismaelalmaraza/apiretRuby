@@ -76,8 +76,6 @@ class BeersController < ApplicationController
   def getMyBeers
     token = request.headers["Authorization"]
     iduser = getToken(token)
-
-    puts "my token es " + token
     @mybeers = []
     @beers = Beer.all
     @beers.each do |beer|
@@ -90,8 +88,7 @@ class BeersController < ApplicationController
   end
 
   def setMyFovoriteBeer
-    params = {"favorite": 1}
-
+   params = {"favorite": 1}
     if @beer.update(params)
       render json: @beer
     else
@@ -111,7 +108,7 @@ class BeersController < ApplicationController
 
   # POST
   def create
-    puts beer_params
+    
     @beer = Beer.new(beer_params)
 
     if @beer.save
@@ -123,9 +120,10 @@ class BeersController < ApplicationController
 
   # PATCH/PUT
   def update
-    params = {
-      "favorite": beer_params[:favorite]
-      }
+    @old_favorite_beer = Beer.find_by(favorite: true)
+    params = {"favorite": 0}
+    @old_favorite_beer.update(params)
+    params = {"favorite": beer_params[:favorite]}
 
     if @beer.update(params)
       render json: @beer
@@ -171,13 +169,21 @@ class BeersController < ApplicationController
 
     #Save a beer when user see a beer from de list
     def saveMyBeer(beer_params)
-      puts beer_params
-      @beer = Beer.new(beer_params)
-  
-      if @beer.save
-        render json: @beer, status: :created, location: @beer
+      t = Time.now
+      @old_beer = Beer.find_by(name:  beer_params[:name])
+      if  @old_beer == nil
+        puts beer_params
+        @beer = Beer.new(beer_params)
+    
+        if @beer.save
+          render json: @beer, status: :created, location: @beer
+        else
+          render json: @beer.errors, status: :unprocessable_entity
+        end
       else
-        render json: @beer.errors, status: :unprocessable_entity
+        params = {"see_at": t.strftime("%d/%m/%Y %H:%M:%S")}
+        @old_beer.update(params)
+        render json: @old_beer
       end
     end
 end
